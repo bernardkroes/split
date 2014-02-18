@@ -3,9 +3,6 @@
 <% else %>
   <% experiment_class = "experiment" %>
 <% end %>
-
-    <%= Split::Counter.all_values_hash(counter_name) %>
-
 <div class="experiment">
   <div class="experiment-header">
     <h2>
@@ -18,9 +15,9 @@
       <th>Alternative</th>
       <th>Counter</th>
     </tr>
-    <%= Split::Counter.all_values_hash(counter_name).each do |experiment, alternative_hash| %>
+    <% Split::Counter.all_values_hash(counter_name).each do |experiment, alternative_hash| %>
       <% total_value = 0 %>
-      <%= alternative_hash.each do |alternative, value| %>
+      <% alternative_hash.each do |alternative, value| %>
         <tr>
           <td><%= experiment %></td>
           <td><%= alternative %></td>
