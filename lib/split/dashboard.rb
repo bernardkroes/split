@@ -51,5 +51,19 @@ module Split
       @experiment.delete
       redirect url('/')
     end
+
+    delete '/counter/:counter' do
+      if Split::Counter.exists?(params[:counter])
+        Split::Counter.delete(params[:counter])
+      end
+      redirect url('/')
+    end
+
+    post '/counter/reset/:counter/:experiment/:alternative' do
+      if Split::Counter.exists?(params[:counter])
+        Split::Counter.reset(params[:counter], params[:experiment], params[:alternative])
+      end
+      redirect url('/')
+    end
   end
 end

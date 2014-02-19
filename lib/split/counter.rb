@@ -23,25 +23,36 @@ module Split
     end
 
     def self.inc(name, experiment, alternative)
-      Split.redis.hincrby(self.hash_name_for_name(name), self.keyname_for_experiment_and_alternative(experiment, alternative), 1)
+      Split.redis.hincrby(Split::Counter.hash_name_for_name(name), Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative), 1)
     end
 
     def inc(experiment, alternative)
-      Split.redis.hincrby(hash_name, self.keyname_for_experiment_and_alternative(experiment, alternative), 1)
+      Split.redis.hincrby(hash_name, Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative), 1)
     end
 
     def self.current_value(name, experiment, alternative)
-      Split.redis.hget(self.hash_name_for_name(name), self.keyname_for_experiment_and_alternative(experiment, alternative))
+      Split.redis.hget(Split::Counter.hash_name_for_name(name), Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
     end
 
     def current_value(experiment, alternative)
-      Split.redis.hget(hash_name, self.keyname_for_experiment_and_alternative(experiment, alternative))
+      Split.redis.hget(hash_name, Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
     end
 
-    # TODO add: reset the entire counter 
-    # TODO add: reset an experiment
+    def self.exists?(name)
+      Split.redis.exists(Split::Counter.hash_name_for_name(name))
+    end
+
+    def self.delete(name)
+      Split.redis.del(Split::Counter.hash_name_for_name(name))
+    end
+
+    # TODO add: reset the counter for an experiment
     def reset(experiment, alternative)
-      Split.redis.hdel(:counters, self.keyname_for_experiment_and_alternative(experiment, alternative))
+      Split.redis.hdel(hash_name, Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
+    end
+
+    def self.reset(name, experiment, alternative)
+      Split.redis.hdel(Split::Counter.hash_name_for_name(name), Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
     end
 
     def all_values_hash
