@@ -1,7 +1,5 @@
 module Split
   class Counter
-    attr_accessor :name
-
     def self.hash_name_for_name(in_name)
       "co:#{in_name}"
     end
@@ -46,53 +44,3 @@ module Split
     end
   end
 end
-
-__END__
-
-counters:  {  
-  'clickout' : 
-      { 
-        'cctv' 
-        {
-          'o' : 1,
-          'g' : 2,
-        },
-        'experiment2' 
-        {
-          'alternative1' : 1,
-          'alternative2' : 2,
-        }
-      },
-  'couponclickout' :
-      {
-        'cctv' 
-        {
-          'o' : 111,
-          'g' : 112,
-        },
-        'experiment2' 
-        {
-          'alternative1' : 2011,
-          'alternative2' : 2012,
-        }
-      },
-
-
-clickout: 
-{
-  'cctv:o': 1,
-  'cctv:g': 2,
-  'experiment2:alternative1' : 1,
-  'experiment2:alternative2' : 2,
-},
-couponclickout: 
-{
-  'cctv:o': 111,
-  'cctv:g': 112,
-  'experiment2:alternative1' : 2011,
-  'experiment2:alternative2' : 2012,
-}
-
-Redis: INCR en DECT
-
-
