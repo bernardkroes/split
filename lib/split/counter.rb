@@ -2,18 +2,6 @@ module Split
   class Counter
     attr_accessor :name
 
-    def initialize(attrs = {})
-      attrs.each do |key,value|
-        if self.respond_to?("#{key}=")
-          self.send("#{key}=", value)
-        end
-      end
-    end
-
-    def hash_name
-      "co:#{name}"
-    end
-
     def self.hash_name_for_name(in_name)
       "co:#{in_name}"
     end
@@ -26,16 +14,8 @@ module Split
       Split.redis.hincrby(Split::Counter.hash_name_for_name(name), Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative), 1)
     end
 
-    def inc(experiment, alternative)
-      Split.redis.hincrby(hash_name, Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative), 1)
-    end
-
     def self.current_value(name, experiment, alternative)
       Split.redis.hget(Split::Counter.hash_name_for_name(name), Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
-    end
-
-    def current_value(experiment, alternative)
-      Split.redis.hget(hash_name, Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
     end
 
     def self.exists?(name)
@@ -46,24 +26,8 @@ module Split
       Split.redis.del(Split::Counter.hash_name_for_name(name))
     end
 
-    # TODO add: reset the counter for an experiment
-    def reset(experiment, alternative)
-      Split.redis.hdel(hash_name, Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
-    end
-
     def self.reset(name, experiment, alternative)
       Split.redis.hdel(Split::Counter.hash_name_for_name(name), Split::Counter.keyname_for_experiment_and_alternative(experiment, alternative))
-    end
-
-    def all_values_hash
-      return_hash = {}
-      result_hash = Split.redis.hgetall(hash_name)  # {"exp1:alt1"=>"1", "exp1:alt2"=>"2", "exp2:alt1"=>"1", "exp2:alt2"=>"2"}
-      result_hash.each do |key, value| 
-        experiment, alternative = key.split(":")
-        return_hash[experiment] ||= Hash.new
-        return_hash[experiment].merge!({ alternative => value.to_i })
-      end
-      return_hash
     end
 
     def self.all_values_hash(name)
